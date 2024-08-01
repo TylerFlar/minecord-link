@@ -1,0 +1,15 @@
+main: com.tylerflar.MineCordLink
+name: MineCord-Link
+version: ${project.version}
+api-version: 1.13
+description: Link your minecraft server to discord
+authors: [TylerFlar]
+website: https://github.com/TylerFlar/MineCord-Link
+commands:
+  minecordlink:
+    description: Reload the MineCord-Link configuration
+    usage: /<command> reload
+permissions:
+  minecordlink.reload:
+    description: Allows reloading the MineCord-Link configuration
+    default: op

@@ -1,0 +1,14 @@
+version: '3'
+services:
+  dev:
+    build: .
+    ports:
+      - "25566:25565"
+    volumes:
+      - .:/workspaces/minecord-link
+      - minecraft-data:/minecraft
+    environment:
+      - JAVA_HOME=/opt/java/openjdk
+
+volumes:
+  minecraft-data:
