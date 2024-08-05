@@ -16,9 +16,8 @@ RUN mkdir -p /minecraft && cd /minecraft && \
 # Set up scripts to build the plugin, copy it to the server, and run the server
 RUN echo '#!/bin/sh' > /usr/local/bin/build-and-run-minecraft && \
     echo 'cd /workspaces/minecord-link && mvn clean package && \
-    mkdir -p /minecraft/plugins/MineCord-Link && \
+    mkdir -p /minecraft/plugins && \
     cp target/minecord-link-*.jar /minecraft/plugins/ && \
-    cp src/main/resources/config.yml /minecraft/plugins/MineCord-Link/ && \
     ln -sf /minecraft/plugins/MineCord-Link/config.yml /workspaces/minecord-link/server-config.yml && \
     cd /minecraft && java -jar spigot-1.21.jar nogui' >> /usr/local/bin/build-and-run-minecraft && \
     chmod +x /usr/local/bin/build-and-run-minecraft
