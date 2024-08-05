@@ -29,8 +29,7 @@
 	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
 	// "shutdownAction": "none",
   
-	// Uncomment the next line to run commands after the container is created.
-	"postCreateCommand": "run-minecraft &",
+	// To start the Minecraft server manually, run: /usr/local/bin/build-and-run-minecraft
   
 	// Configure tool-specific properties.
 	"customizations": {

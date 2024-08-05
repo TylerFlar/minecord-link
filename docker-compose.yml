@@ -9,6 +9,7 @@ services:
       - minecraft-data:/minecraft
     environment:
       - JAVA_HOME=/opt/java/openjdk
+    command: /bin/sh -c "while sleep 1000; do :; done"
 
 volumes:
   minecraft-data:

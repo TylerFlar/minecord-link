@@ -1,7 +1,7 @@
 FROM eclipse-temurin:21-jdk-jammy
 
-# Install Maven and Git
-RUN apt-get update && apt-get install -y maven git
+# Install Maven, Git, and X11 libraries
+RUN apt-get update && apt-get install -y maven git libx11-6 libxext6 libxrender1 libxtst6 libxi6
 
 # Set working directory
 WORKDIR /workspaces/minecord-link
@@ -13,9 +13,15 @@ RUN mkdir -p /minecraft && cd /minecraft && \
     echo "eula=true" > eula.txt && \
     echo "server-port=25565" >> server.properties
 
-# Set up a script to run the server
-RUN echo '#!/bin/sh\ncd /minecraft && java -jar spigot-1.21.jar nogui' > /usr/local/bin/run-minecraft && \
-    chmod +x /usr/local/bin/run-minecraft
+# Set up scripts to build the plugin, copy it to the server, and run the server
+RUN echo '#!/bin/sh' > /usr/local/bin/build-and-run-minecraft && \
+    echo 'cd /workspaces/minecord-link && mvn clean package && \
+    mkdir -p /minecraft/plugins/MineCord-Link && \
+    cp target/minecord-link-*.jar /minecraft/plugins/ && \
+    cp src/main/resources/config.yml /minecraft/plugins/MineCord-Link/ && \
+    ln -sf /minecraft/plugins/MineCord-Link/config.yml /workspaces/minecord-link/server-config.yml && \
+    cd /minecraft && java -jar spigot-1.21.jar nogui' >> /usr/local/bin/build-and-run-minecraft && \
+    chmod +x /usr/local/bin/build-and-run-minecraft
 
 # Keep the container running
 CMD ["tail", "-f", "/dev/null"]
