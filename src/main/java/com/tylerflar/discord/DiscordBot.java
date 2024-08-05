@@ -1,14 +1,14 @@
 package com.tylerflar.discord;
 
-import discord4j.core.DiscordClientBuilder;
-import discord4j.core.GatewayDiscordClient;
-import discord4j.core.event.domain.lifecycle.ReadyEvent;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.bukkit.plugin.java.JavaPlugin;
-import reactor.core.publisher.Mono;
 
-public class DiscordBot {
+public class DiscordBot extends ListenerAdapter {
     private final JavaPlugin plugin;
-    private GatewayDiscordClient client;
+    private JDA jda;
 
     public DiscordBot(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -21,26 +21,29 @@ public class DiscordBot {
             return;
         }
 
-        client = DiscordClientBuilder.create(token).build().login().block();
-
-        if (client != null) {
-            client.on(ReadyEvent.class).flatMap(event -> Mono.fromRunnable(() -> 
-                plugin.getLogger().info("Logged in as " + event.getSelf().getUsername())))
-            .subscribe();
-            client.onDisconnect().subscribe();
-        } else {
-            plugin.getLogger().severe("Failed to login to Discord!");
+        try {
+            jda = JDABuilder.createDefault(token)
+                    .addEventListeners(this)
+                    .build();
+            jda.awaitReady();
+        } catch (Exception e) {
+            plugin.getLogger().severe("Failed to login to Discord: " + e.getMessage());
         }
     }
 
     public void stop() {
-        if (client != null) {
-            client.logout().block();
+        if (jda != null) {
+            jda.shutdown();
         }
     }
 
     public void restart() {
         stop();
         start();
+    }
+
+    @Override
+    public void onReady(ReadyEvent event) {
+        plugin.getLogger().info("Logged in as " + event.getJDA().getSelfUser().getName());
     }
 }
