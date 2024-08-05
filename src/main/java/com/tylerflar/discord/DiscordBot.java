@@ -1,17 +1,30 @@
 package com.tylerflar.discord;
 
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+
+import com.tylerflar.discord.commands.AdminCommand;
+import com.tylerflar.discord.commands.CommandManager;
+import com.tylerflar.discord.commands.PingCommand;
+
+import java.util.List;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class DiscordBot extends ListenerAdapter {
     private final JavaPlugin plugin;
     private JDA jda;
+    private final CommandManager commandManager;
+    private final List<String> authorizedUsers;
 
-    public DiscordBot(JavaPlugin plugin) {
+    public DiscordBot(JavaPlugin plugin, List<String> authorizedUsers) {
         this.plugin = plugin;
+        this.authorizedUsers = authorizedUsers;
+        this.commandManager = new CommandManager(plugin);
     }
 
     public void start() {
@@ -23,12 +36,29 @@ public class DiscordBot extends ListenerAdapter {
 
         try {
             jda = JDABuilder.createDefault(token)
-                    .addEventListeners(this)
+                    .enableIntents(GatewayIntent.GUILD_MESSAGES,
+                            GatewayIntent.GUILD_MESSAGE_REACTIONS,
+                            GatewayIntent.GUILD_WEBHOOKS,
+                            GatewayIntent.GUILD_MEMBERS,
+                            GatewayIntent.MESSAGE_CONTENT)
+                    .setActivity(Activity.playing("Minecraft"))
+                    .addEventListeners(this, commandManager)
                     .build();
             jda.awaitReady();
+
+            // Register all commands here
+            registerCommands();
+            commandManager.registerCommands(jda);
+
+            plugin.getLogger().info("Discord bot started and commands registered successfully!");
         } catch (Exception e) {
-            plugin.getLogger().severe("Failed to login to Discord: " + e.getMessage());
+            plugin.getLogger().severe("Failed to start Discord bot: " + e.getMessage());
         }
+    }
+
+    private void registerCommands() {
+        commandManager.registerCommand(new PingCommand());
+        commandManager.registerCommand(new AdminCommand(plugin, authorizedUsers));
     }
 
     public void stop() {
