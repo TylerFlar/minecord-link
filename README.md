@@ -1,14 +1,14 @@
 # MineCord-Link
 
-MineCord-Link is a Minecraft plugin that links your Minecraft server to Discord, enabling seemless communication between the two platforms.
+MineCord-Link is a Minecraft plugin that links your Minecraft server to Discord, enabling seamless communication between the two platforms.
 
-**Note: This project is currently under development and is not yet complete.**
+**Note: This project is currently under development.**
 
-## Features (Planned)
+## Features
 
 - Connect your Minecraft server chat with a Discord channel.
 - Send Minecraft server events (player join/leave, achievements, etc.) to Discord.
-- Execute Minecraft commands from Discord
+- Execute Minecraft commands from Discord.
 - Customizable message formats and event notifications.
 
 ## Requirements
@@ -22,7 +22,7 @@ MineCord-Link is a Minecraft plugin that links your Minecraft server to Discord,
 1. Download the latest release JAR file from the [Releases](https://github.com/TylerFlar/MineCord-Link/releases) page.
 2. Place the JAR file in your Minecraft server's `plugins` folder.
 3. Restart your Minecraft server.
-4. Edit the `config.yml` file in the `plugins/MineCord-Link` directory to add your Discord bot token.
+4. Edit the `config.yml` file in the `plugins/MineCord-Link` directory to add your Discord bot token and authorized users.
 
 ## Configuration
 
@@ -31,13 +31,19 @@ The main configuration file is located at `plugins/MineCord-Link/config.yml`. He
 ```yaml
 discord:
   token: YOUR_BOT_DISCORD_TOKEN
+  authorized_users:
+    - "123456789012345678" # Replace with actual Discord user IDs
+    - "234567890123456789"
 ```
-
-Replace `YOUR_BOT_DISCORD_TOKEN` with your actual Discord bot token.
 
 ## Commands
 
+### Minecraft Commands
 - `/minecordlink reload` - Reloads the plugin configuration (requires `minecordlink.reload` permission)
+
+### Discord Commands
+- `/ping` - Responds with "Pong!" to check if the bot is active
+- `/admin <command>` - Executes a Minecraft server command (only for authorized users)
 
 For more details on commands and permissions, see the `plugin.yml` file.
 
@@ -65,6 +71,23 @@ The dev container includes a Spigot server for testing. You can connect to it us
 - Port: 25566
 
 Note: The dev container uses Java 21, which is the latest LTS version. This ensures compatibility with the latest Minecraft server versions.
+
+The dev container includes a script to build the plugin, copy it to the Minecraft server, and run the server. To use it:
+
+1. Open a terminal in the dev container
+2. Run the following command:
+
+   ```
+   /usr/local/bin/build-and-run-minecraft
+   ```
+
+This script will:
+1. Build the MineCord-Link plugin using Maven
+2. Copy the built JAR file to the Minecraft server's plugins folder
+3. Create a symlink for the config file
+4. Start the Minecraft server
+
+You can use this script to quickly test your changes in a Minecraft server environment.
 
 ## Contributing
 
