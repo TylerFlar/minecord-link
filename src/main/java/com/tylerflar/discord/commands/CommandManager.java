@@ -23,21 +23,17 @@ public class CommandManager extends ListenerAdapter {
 
     public void registerCommands(JDA jda) {
         for (Command command : commands) {
-            plugin.getLogger().info("Registering command: " + command.getName());
             jda.upsertCommand(command.getName(), command.getDescription()).queue();
         }
     }
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        plugin.getLogger().info("Received slash command: " + event.getName());
         for (Command command : commands) {
             if (event.getName().equals(command.getName())) {
-                plugin.getLogger().info("Executing command: " + command.getName());
                 command.execute(event);
                 return;
             }
         }
-        plugin.getLogger().warning("Command not found: " + event.getName());
     }
 }
