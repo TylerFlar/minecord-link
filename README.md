@@ -7,9 +7,8 @@ MineCord-Link is a Minecraft plugin that links your Minecraft server to Discord,
 ## Features
 
 - Connect your Minecraft server chat with a Discord channel.
-- Send Minecraft server events (player join/leave, achievements, etc.) to Discord.
+- Send Minecraft server events (player join/leave, deaths, achievements, etc.) to Discord.
 - Execute Minecraft commands from Discord.
-- Customizable message formats and event notifications.
 
 ## Requirements
 
@@ -34,7 +33,14 @@ discord:
   authorized_users:
     - "123456789012345678" # Replace with actual Discord user IDs
     - "234567890123456789"
+  # DO NOT TOUCH THE FOLLOWING VALUES MANUALLY:
+  # They are managed by the plugin and will be overwritten.
+  server_id: ""
+  channel_id: ""
+  webhook_url: ""
 ```
+
+**Note:** The `server_id`, `channel_id`, and `webhook_url` fields are automatically managed by the plugin. Do not modify these values manually, as they will be overwritten when you use the `/setup` command in Discord.
 
 ## Commands
 
@@ -44,6 +50,7 @@ discord:
 ### Discord Commands
 - `/ping` - Responds with "Pong!" to check if the bot is active
 - `/admin <command>` - Executes a Minecraft server command (only for authorized users)
+- `/setup` - Sets up the bot for the current server and channel
 
 For more details on commands and permissions, see the `plugin.yml` file.
 

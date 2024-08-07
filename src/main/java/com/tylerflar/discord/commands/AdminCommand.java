@@ -4,6 +4,10 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+
+import com.tylerflar.MineCordLink;
+import com.tylerflar.discord.utils.MessageFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,11 +16,9 @@ import java.util.List;
 
 public class AdminCommand implements Command {
     private final JavaPlugin plugin;
-    private final List<String> authorizedUsers;
 
-    public AdminCommand(JavaPlugin plugin, List<String> authorizedUsers) {
+    public AdminCommand(JavaPlugin plugin) {
         this.plugin = plugin;
-        this.authorizedUsers = authorizedUsers;
     }
 
     @Override
@@ -39,14 +41,17 @@ public class AdminCommand implements Command {
     @Override
     public void execute(SlashCommandInteractionEvent event) {
         String userId = event.getUser().getId();
+        List<String> authorizedUsers = ((MineCordLink) plugin).getAuthorizedUsers();
         if (!authorizedUsers.contains(userId)) {
-            event.reply("You are not authorized to use this command.").setEphemeral(true).queue();
+            MessageEmbed errorResponse = MessageFormatter.formatError("Unauthorized", "You are not authorized to use this command.");
+            event.replyEmbeds(errorResponse).setEphemeral(true).queue();
             return;
         }
 
         OptionMapping commandOption = event.getOption("command");
         if (commandOption == null) {
-            event.reply("Please provide a command to execute.").setEphemeral(true).queue();
+            MessageEmbed errorResponse = MessageFormatter.formatError("Invalid Input", "Please provide a command to execute.");
+            event.replyEmbeds(errorResponse).setEphemeral(true).queue();
             return;
         }
 
@@ -55,6 +60,7 @@ public class AdminCommand implements Command {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         });
 
-        event.reply("Command executed: " + command).setEphemeral(true).queue();
+        MessageEmbed successResponse = MessageFormatter.formatSuccess("Command Executed", "The following command was executed: `" + command + "`");
+        event.replyEmbeds(successResponse).setEphemeral(true).queue();
     }
 }
