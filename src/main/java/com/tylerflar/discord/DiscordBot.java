@@ -13,6 +13,7 @@ import com.tylerflar.discord.commands.AdminCommand;
 import com.tylerflar.discord.commands.CommandManager;
 import com.tylerflar.discord.commands.PingCommand;
 import com.tylerflar.discord.commands.SetupCommand;
+import com.tylerflar.discord.commands.PlayersCommand;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -50,7 +51,7 @@ public class DiscordBot extends ListenerAdapter {
             // Register all commands globally
             registerCommands();
             commandManager.updateGlobalCommands(jda);
-            
+
             plugin.getLogger().info("Discord bot started and commands registered successfully!");
         } catch (Exception e) {
             plugin.getLogger().severe("Failed to start Discord bot: " + e.getMessage());
@@ -62,6 +63,7 @@ public class DiscordBot extends ListenerAdapter {
         commandManager.registerCommand(new PingCommand());
         commandManager.registerCommand(new AdminCommand(plugin));
         commandManager.registerCommand(new SetupCommand(plugin));
+        commandManager.registerCommand(new PlayersCommand());
     }
 
     public void stop() {
@@ -83,7 +85,8 @@ public class DiscordBot extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         String configChannelId = plugin.getConfig().getString("discord.channel_id");
-        if (configChannelId != null && !configChannelId.isEmpty() && event.getChannel().getId().equals(configChannelId)) {
+        if (configChannelId != null && !configChannelId.isEmpty()
+                && event.getChannel().getId().equals(configChannelId)) {
             if (!event.getMessage().isWebhookMessage()) {
                 StringBuilder attachmentInfo = new StringBuilder();
                 boolean isEmpty = event.getMessage().getContentDisplay().isEmpty();
@@ -104,9 +107,9 @@ public class DiscordBot extends ListenerAdapter {
                             .append(attachment.getContentType()).append("]");
                 }
 
-                String message = ChatColor.DARK_AQUA + event.getAuthor().getName() + ": " + 
-                                 ChatColor.WHITE + event.getMessage().getContentDisplay() +
-                                 ChatColor.RED + attachmentInfo.toString();
+                String message = ChatColor.DARK_AQUA + event.getAuthor().getName() + ": " +
+                        ChatColor.WHITE + event.getMessage().getContentDisplay() +
+                        ChatColor.RED + attachmentInfo.toString();
 
                 Bukkit.getScheduler().runTask(plugin, () -> Bukkit.broadcastMessage(message));
             }

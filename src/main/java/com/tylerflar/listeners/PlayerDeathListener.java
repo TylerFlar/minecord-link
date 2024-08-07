@@ -23,19 +23,18 @@ public class PlayerDeathListener implements Listener {
         String playerName = event.getEntity().getName();
         String deathMessage = event.getDeathMessage();
         String avatarUrl = "https://mc-heads.net/avatar/" + playerName;
-        
+
         WebhookEmbed embed = new WebhookEmbedBuilder()
-            .setColor(Color.RED.getRGB())
-            .setAuthor(new WebhookEmbed.EmbedAuthor(playerName, avatarUrl, null))
-            .setDescription(deathMessage != null ? deathMessage : playerName + " died")
-            .setTimestamp(Instant.now())
-            .build();
-        
+                .setColor(Color.decode("#2C3E50").getRGB())
+                .setAuthor(new WebhookEmbed.EmbedAuthor(playerName, avatarUrl, null))
+                .setDescription(deathMessage != null ? deathMessage : playerName + " died")
+                .setTimestamp(Instant.now())
+                .build();
+
         plugin.getWebhookManager().sendMessage(
-            null,  // No content, using embed instead
-            "Server",
-            null,  // No avatar URL for webhook
-            embed
-        );
+                null, // No content, using embed instead
+                "Server",
+                null, // No avatar URL for webhook
+                embed);
     }
 }

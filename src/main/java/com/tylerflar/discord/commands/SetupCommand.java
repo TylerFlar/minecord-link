@@ -2,9 +2,9 @@ package com.tylerflar.discord.commands;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.Permission;
-import com.tylerflar.discord.utils.MessageFormatter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
 import com.tylerflar.MineCordLink;
@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.Webhook;
 
 import java.util.Collections;
 import java.util.List;
+import java.awt.Color;
 
 public class SetupCommand implements Command {
     private final JavaPlugin plugin;
@@ -39,8 +40,11 @@ public class SetupCommand implements Command {
     public void execute(SlashCommandInteractionEvent event) {
         // Check if the user is a Discord server admin
         if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            MessageEmbed errorResponse = MessageFormatter.formatError("Unauthorized",
-                    "You must be a Discord server admin to use this command.");
+            MessageEmbed errorResponse = new EmbedBuilder()
+                    .setTitle("Unauthorized")
+                    .setDescription("You must be a Discord server admin to use this command.")
+                    .setColor(Color.decode("#E74C3C").getRGB())
+                    .build();
             event.replyEmbeds(errorResponse).setEphemeral(true).queue();
             return;
         }
@@ -49,8 +53,11 @@ public class SetupCommand implements Command {
         String userId = event.getUser().getId();
         List<String> authorizedUsers = ((MineCordLink) plugin).getAuthorizedUsers();
         if (!authorizedUsers.contains(userId)) {
-            MessageEmbed errorResponse = MessageFormatter.formatError("Unauthorized",
-                    "You must be a Minecraft server admin to use this command.");
+            MessageEmbed errorResponse = new EmbedBuilder()
+                    .setTitle("Unauthorized")
+                    .setDescription("You must be a Minecraft server admin to use this command.")
+                    .setColor(Color.decode("#E74C3C").getRGB())
+                    .build();
             event.replyEmbeds(errorResponse).setEphemeral(true).queue();
             return;
         }
@@ -64,7 +71,8 @@ public class SetupCommand implements Command {
 
         // Delete existing MineCord-Link webhooks in the configured channel
         if (!existingChannelId.isEmpty()) {
-            net.dv8tion.jda.api.entities.channel.concrete.TextChannel existingChannel = event.getJDA().getTextChannelById(existingChannelId);
+            net.dv8tion.jda.api.entities.channel.concrete.TextChannel existingChannel = event.getJDA()
+                    .getTextChannelById(existingChannelId);
             if (existingChannel != null) {
                 existingChannel.retrieveWebhooks().queue(webhooks -> {
                     for (Webhook webhook : webhooks) {
@@ -93,10 +101,13 @@ public class SetupCommand implements Command {
                     // Update the WebhookManager
                     ((MineCordLink) plugin).getWebhookManager().updateWebhookUrl(webhookUrl);
 
-                    MessageEmbed response = MessageFormatter.formatSuccess("Setup Complete",
-                            "The bot has been set up for this server and channel.\n" +
+                    MessageEmbed response = new EmbedBuilder()
+                            .setTitle("Setup Complete")
+                            .setDescription("The bot has been set up for this server and channel.\n" +
                                     "Server ID: " + serverId + "\n" +
-                                    "Channel ID: " + channelId);
+                                    "Channel ID: " + channelId)
+                            .setColor(Color.decode("#3498DB").getRGB())
+                            .build();
                     event.replyEmbeds(response).setEphemeral(true).queue();
                     return;
                 }
@@ -115,10 +126,13 @@ public class SetupCommand implements Command {
                 // Update the WebhookManager
                 ((MineCordLink) plugin).getWebhookManager().updateWebhookUrl(webhookUrl);
 
-                MessageEmbed response = MessageFormatter.formatSuccess("Setup Complete",
-                        "The bot has been set up for this server and channel.\n" +
+                MessageEmbed response = new EmbedBuilder()
+                        .setTitle("Setup Complete")
+                        .setDescription("The bot has been set up for this server and channel.\n" +
                                 "Server ID: " + serverId + "\n" +
-                                "Channel ID: " + channelId);
+                                "Channel ID: " + channelId)
+                        .setColor(Color.decode("#3498DB").getRGB())
+                        .build();
                 event.replyEmbeds(response).setEphemeral(true).queue();
             });
         });

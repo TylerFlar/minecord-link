@@ -22,19 +22,18 @@ public class LeaveListener implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         String playerName = event.getPlayer().getName();
         String avatarUrl = "https://mc-heads.net/avatar/" + playerName;
-        
+
         WebhookEmbed embed = new WebhookEmbedBuilder()
-            .setColor(Color.decode("#FFA500").getRGB())
-            .setAuthor(new WebhookEmbed.EmbedAuthor(playerName, avatarUrl, null))
-            .setDescription(playerName + " has left the server!")
-            .setTimestamp(Instant.now())
-            .build();
-        
+                .setColor(Color.decode("#95A5A6").getRGB())
+                .setAuthor(new WebhookEmbed.EmbedAuthor(playerName, avatarUrl, null))
+                .setDescription(playerName + " has left the server!")
+                .setTimestamp(Instant.now())
+                .build();
+
         plugin.getWebhookManager().sendMessage(
-            null,  // No content, using embed instead
-            "Server",
-            null,  // No avatar URL for webhook
-            embed
-        );
+                null, // No content, using embed instead
+                "Server",
+                null, // No avatar URL for webhook
+                embed);
     }
 }

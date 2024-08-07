@@ -1,6 +1,7 @@
 package com.tylerflar.discord.commands;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -8,15 +9,15 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.tylerflar.discord.utils.MessageFormatter;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.awt.Color;
 
 public class CommandManager extends ListenerAdapter {
     private final JavaPlugin plugin;
     private final List<Command> commands = new ArrayList<>();
+
     public CommandManager(JavaPlugin plugin) {
         this.plugin = plugin;
         registerCommand(new SetupCommand(plugin));
@@ -32,10 +33,10 @@ public class CommandManager extends ListenerAdapter {
 
     public void updateGlobalCommands(JDA jda) {
         List<CommandData> commandData = commands.stream()
-            .map(command -> Commands.slash(command.getName(), command.getDescription())
-                .addOptions(command.getOptions()))
-            .collect(Collectors.toList());
-        
+                .map(command -> Commands.slash(command.getName(), command.getDescription())
+                        .addOptions(command.getOptions()))
+                .collect(Collectors.toList());
+
         jda.updateCommands().addCommands(commandData).queue();
     }
 
@@ -48,21 +49,25 @@ public class CommandManager extends ListenerAdapter {
 
         if (configServerId.isEmpty() || configChannelId.isEmpty()) {
             if (!event.getName().equals("setup")) {
-                MessageEmbed errorResponse = MessageFormatter.formatError(
-                    "Setup Required",
-                    "The bot has not been set up yet. Please use the `/setup` command to configure the bot."
-                );
+                MessageEmbed errorResponse = new EmbedBuilder()
+                        .setTitle("Setup Required")
+                        .setDescription(
+                                "The bot has not been set up yet. Please use the `/setup` command to configure the bot.")
+                        .setColor(Color.decode("#F1C40F").getRGB())
+                        .build();
                 event.replyEmbeds(errorResponse).setEphemeral(true).queue();
                 return;
             }
         } else if (!serverId.equals(configServerId) || !channelId.equals(configChannelId)) {
             if (!event.getName().equals("setup")) {
                 String correctServerLink = "https://discord.com/channels/" + configServerId + "/" + configChannelId;
-                MessageEmbed errorResponse = MessageFormatter.formatError(
-                    "Wrong Channel",
-                    "This command can only be used in the configured server and channel.\n" +
-                    "Please use this command in the correct channel: [Click here](" + correctServerLink + ")"
-                );
+                MessageEmbed errorResponse = new EmbedBuilder()
+                        .setTitle("Wrong Channel")
+                        .setDescription("This command can only be used in the configured server and channel.\n" +
+                                "Please use this command in the correct channel: [Click here](" + correctServerLink
+                                + ")")
+                        .setColor(Color.decode("#9B59B6").getRGB())
+                        .build();
                 event.replyEmbeds(errorResponse).setEphemeral(true).queue();
                 return;
             }

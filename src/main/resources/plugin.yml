@@ -9,6 +9,9 @@ commands:
   minecordlink:
     description: Reload the MineCord-Link configuration
     usage: /<command> reload
+  coords:
+    description: Share your current coordinates
+    usage: /<command> [location name]
 permissions:
   minecordlink.reload:
     description: Allows reloading the MineCord-Link configuration

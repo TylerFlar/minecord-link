@@ -9,12 +9,19 @@ import com.tylerflar.listeners.JoinListener;
 import com.tylerflar.listeners.LeaveListener;
 import com.tylerflar.listeners.PlayerDeathListener;
 import com.tylerflar.listeners.PlayerAdvancementListener;
+
+import club.minnced.discord.webhook.send.WebhookEmbed;
+import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
+
+import com.tylerflar.commands.CoordsCommand;
 import com.tylerflar.commands.ReloadCommand;
 
 import java.util.List;
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Instant;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -25,15 +32,32 @@ public class MineCordLink extends JavaPlugin {
     @Override
     public void onEnable() {
         updateConfig();
-        this.discordBot = new DiscordBot(this);
+        this.discordBot = new DiscordBot(this); 
         discordBot.start();
         getCommand("minecordlink").setExecutor(new ReloadCommand(this, discordBot));
+        getCommand("coords").setExecutor(new CoordsCommand(this));
         this.webhookManager = new WebhookManager(this);
         getServer().getPluginManager().registerEvents(new ChatListener(this), this);
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
         getServer().getPluginManager().registerEvents(new LeaveListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerAdvancementListener(this), this);
+
+        // Schedule the server start message to be sent after a short delay
+        getServer().getScheduler().runTaskLater(this, () -> {
+            WebhookEmbed embed = new WebhookEmbedBuilder()
+                    .setColor(Color.decode("#2980B9").getRGB())
+                    .setDescription("Server has started and is ready to accept connections!")
+                    .setTimestamp(Instant.now())
+                    .build();
+
+            webhookManager.sendMessage(
+                    null, // No content, using embed instead
+                    "Server",
+                    null, // No avatar URL for webhook
+                    embed);
+        }, 20L); // 20 ticks = 1 second delay
+
         getLogger().info("MineCordLink has been enabled!");
     }
 
@@ -43,6 +67,17 @@ public class MineCordLink extends JavaPlugin {
             discordBot.stop();
         }
         if (webhookManager != null) {
+            WebhookEmbed embed = new WebhookEmbedBuilder()
+                    .setColor(Color.decode("#7F8C8D").getRGB())
+                    .setDescription("Server has stopped.")
+                    .setTimestamp(Instant.now())
+                    .build();
+
+            webhookManager.sendMessage(
+                    null, // No content, using embed instead
+                    "Server",
+                    null, // No avatar URL for webhook
+                    embed);
             webhookManager.shutdown();
         }
         getLogger().info("MineCordLink has been disabled!");
@@ -55,22 +90,23 @@ public class MineCordLink extends JavaPlugin {
             return;
         }
 
-        YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getResource("config.yml")));
+        YamlConfiguration defaultConfig = YamlConfiguration
+                .loadConfiguration(new InputStreamReader(getResource("config.yml")));
         YamlConfiguration currentConfig = YamlConfiguration.loadConfiguration(configFile);
 
         boolean updated = false;
         for (String key : defaultConfig.getKeys(true)) {
             if (!currentConfig.contains(key) &&
-                !key.startsWith("discord.server_id") &&
-                !key.startsWith("discord.channel_id") &&
-                !key.startsWith("discord.webhook_url")) {
+                    !key.startsWith("discord.server_id") &&
+                    !key.startsWith("discord.channel_id") &&
+                    !key.startsWith("discord.webhook_url")) {
                 currentConfig.set(key, defaultConfig.get(key));
                 updated = true;
             }
         }
 
         // Ensure managed fields exist but don't overwrite them
-        String[] managedFields = {"server_id", "channel_id", "webhook_url"};
+        String[] managedFields = { "server_id", "channel_id", "webhook_url" };
         for (String field : managedFields) {
             String key = "discord." + field;
             if (!currentConfig.contains(key)) {

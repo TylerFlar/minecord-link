@@ -4,15 +4,16 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 
 import com.tylerflar.MineCordLink;
-import com.tylerflar.discord.utils.MessageFormatter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
 import java.util.List;
+import java.awt.Color;
 
 public class AdminCommand implements Command {
     private final JavaPlugin plugin;
@@ -34,8 +35,7 @@ public class AdminCommand implements Command {
     @Override
     public List<OptionData> getOptions() {
         return Collections.singletonList(
-            new OptionData(OptionType.STRING, "command", "The command to execute", true)
-        );
+                new OptionData(OptionType.STRING, "command", "The command to execute", true));
     }
 
     @Override
@@ -43,14 +43,22 @@ public class AdminCommand implements Command {
         String userId = event.getUser().getId();
         List<String> authorizedUsers = ((MineCordLink) plugin).getAuthorizedUsers();
         if (!authorizedUsers.contains(userId)) {
-            MessageEmbed errorResponse = MessageFormatter.formatError("Unauthorized", "You are not authorized to use this command.");
+            MessageEmbed errorResponse = new EmbedBuilder()
+                    .setTitle("Unauthorized")
+                    .setDescription("You are not authorized to use this command.")
+                    .setColor(Color.decode("#FF4C4C").getRGB())
+                    .build();
             event.replyEmbeds(errorResponse).setEphemeral(true).queue();
             return;
         }
 
         OptionMapping commandOption = event.getOption("command");
         if (commandOption == null) {
-            MessageEmbed errorResponse = MessageFormatter.formatError("Invalid Input", "Please provide a command to execute.");
+            MessageEmbed errorResponse = new EmbedBuilder()
+                    .setTitle("Invalid Input")
+                    .setDescription("Please provide a command to execute.")
+                    .setColor(Color.decode("#FFA500").getRGB())
+                    .build();
             event.replyEmbeds(errorResponse).setEphemeral(true).queue();
             return;
         }
@@ -60,7 +68,11 @@ public class AdminCommand implements Command {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         });
 
-        MessageEmbed successResponse = MessageFormatter.formatSuccess("Command Executed", "The following command was executed: `" + command + "`");
+        MessageEmbed successResponse = new EmbedBuilder()
+                .setTitle("Command Executed")
+                .setDescription("The following command was executed: `" + command + "`")
+                .setColor(Color.decode("#4CAF50").getRGB())
+                .build();
         event.replyEmbeds(successResponse).setEphemeral(true).queue();
     }
 }

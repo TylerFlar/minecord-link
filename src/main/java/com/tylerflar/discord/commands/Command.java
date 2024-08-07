@@ -7,7 +7,10 @@ import java.util.List;
 
 public interface Command {
     String getName();
+
     String getDescription();
+
     List<OptionData> getOptions();
+
     void execute(SlashCommandInteractionEvent event);
 }

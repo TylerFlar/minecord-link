@@ -22,19 +22,18 @@ public class JoinListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         String playerName = event.getPlayer().getName();
         String avatarUrl = "https://mc-heads.net/avatar/" + playerName;
-        
+
         WebhookEmbed embed = new WebhookEmbedBuilder()
-            .setColor(Color.decode("#7CFC00").getRGB())
-            .setAuthor(new WebhookEmbed.EmbedAuthor(playerName, avatarUrl, null))
-            .setDescription(playerName + " has joined the server!")
-            .setTimestamp(Instant.now())
-            .build();
-        
+                .setColor(Color.decode("#2ECC71").getRGB())
+                .setAuthor(new WebhookEmbed.EmbedAuthor(playerName, avatarUrl, null))
+                .setDescription(playerName + " has joined the server!")
+                .setTimestamp(Instant.now())
+                .build();
+
         plugin.getWebhookManager().sendMessage(
-            null,  // No content, using embed instead
-            "Server",
-            null,  // No avatar URL for webhook
-            embed
-        );
+                null, // No content, using embed instead
+                "Server",
+                null, // No avatar URL for webhook
+                embed);
     }
 }

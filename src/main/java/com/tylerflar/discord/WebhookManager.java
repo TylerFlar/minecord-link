@@ -22,7 +22,8 @@ public class WebhookManager {
     }
 
     public void sendMessage(String content, String username, String avatarUrl, WebhookEmbed embed) {
-        if (client == null) return;
+        if (client == null)
+            return;
 
         WebhookMessageBuilder builder = new WebhookMessageBuilder();
         if (content != null && !content.isEmpty()) {
@@ -43,10 +44,10 @@ public class WebhookManager {
 
     public WebhookEmbed createEmbed(String title, String description, Color color) {
         return new WebhookEmbedBuilder()
-            .setColor(color.getRGB())
-            .setDescription(description)
-            .setTitle(new WebhookEmbed.EmbedTitle(title, null))
-            .build();
+                .setColor(color.getRGB())
+                .setDescription(description)
+                .setTitle(new WebhookEmbed.EmbedTitle(title, null))
+                .build();
     }
 
     public void updateWebhookUrl(String newWebhookUrl) {

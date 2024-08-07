@@ -18,14 +18,14 @@ public class ChatListener implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         String playerName = event.getPlayer().getName();
         String message = ChatColor.stripColor(event.getMessage());
-        
+
         String avatarUrl = "https://mc-heads.net/avatar/" + event.getPlayer().getName();
-        
+
         plugin.getWebhookManager().sendMessage(
-            message,
-            playerName,
-            avatarUrl,
-            null  // No embed
+                message,
+                playerName,
+                avatarUrl,
+                null // No embed
         );
     }
 }
