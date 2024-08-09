@@ -31,6 +31,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class MineCordLink extends JavaPlugin {
     private DiscordBot discordBot;
     private WebhookManager webhookManager;
+    private ChatListener chatListener;
 
     @Override
     public void onEnable() {
@@ -41,7 +42,8 @@ public class MineCordLink extends JavaPlugin {
         getCommand("minecordlink").setExecutor(new ReloadCommand(this, discordBot));
         getCommand("coords").setExecutor(new CoordsCommand(this));
         this.webhookManager = new WebhookManager(this);
-        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+        this.chatListener = new ChatListener(this);
+        getServer().getPluginManager().registerEvents(chatListener, this);
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
         getServer().getPluginManager().registerEvents(new LeaveListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
@@ -158,5 +160,9 @@ public class MineCordLink extends JavaPlugin {
 
     public WebhookManager getWebhookManager() {
         return webhookManager;
+    }
+
+    public ChatListener getChatListener() {
+        return chatListener;
     }
 }

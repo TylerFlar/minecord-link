@@ -92,11 +92,14 @@ This step is crucial as it establishes the connection between your Minecraft ser
 
 ### Minecraft Commands
 - `/minecordlink reload` - Reloads the plugin configuration (requires `minecordlink.reload` permission)
+- `/coords [location name]` - Share your current coordinates in the game and Discord
 
 ### Discord Commands
 - `/ping` - Responds with "Pong!" to check if the bot is active
 - `/admin <command>` - Executes a Minecraft server command (only for authorized users)
-- `/setup` - Sets up the bot for the current server and channel
+- `/setup` - Sets up the bot for the current server and channel (requires Discord Administrator permission)
+- `/players` - Displays a list of online players
+- `/crosschat` - Toggles the crosschat feature on or off (only for authorized users)
 
 For more details on commands and permissions, see the `plugin.yml` file.
 

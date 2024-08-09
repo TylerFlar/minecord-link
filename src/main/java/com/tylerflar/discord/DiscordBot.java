@@ -14,6 +14,7 @@ import com.tylerflar.discord.commands.CommandManager;
 import com.tylerflar.discord.commands.PingCommand;
 import com.tylerflar.discord.commands.SetupCommand;
 import com.tylerflar.discord.commands.PlayersCommand;
+import com.tylerflar.discord.commands.CrossChatToggleCommand;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -64,6 +65,7 @@ public class DiscordBot extends ListenerAdapter {
         commandManager.registerCommand(new AdminCommand(plugin));
         commandManager.registerCommand(new SetupCommand(plugin));
         commandManager.registerCommand(new PlayersCommand());
+        commandManager.registerCommand(new CrossChatToggleCommand(plugin));
     }
 
     public void stop() {
@@ -85,7 +87,9 @@ public class DiscordBot extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         String configChannelId = plugin.getConfig().getString("discord.channel_id");
-        if (configChannelId != null && !configChannelId.isEmpty()
+        boolean crossChatEnabled = plugin.getConfig().getBoolean("crosschat_enabled", true);
+
+        if (crossChatEnabled && configChannelId != null && !configChannelId.isEmpty()
                 && event.getChannel().getId().equals(configChannelId)) {
             if (!event.getMessage().isWebhookMessage()) {
                 StringBuilder attachmentInfo = new StringBuilder();
