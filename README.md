@@ -2,8 +2,6 @@
 
 MineCord-Link is a Minecraft plugin that links your Minecraft server to Discord, enabling seamless communication between the two platforms.
 
-**Note: This project is currently under development.**
-
 ## Features
 
 - Connect your Minecraft server chat with a Discord channel.
