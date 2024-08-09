@@ -16,6 +16,42 @@ MineCord-Link is a Minecraft plugin that links your Minecraft server to Discord,
 - Spigot/Paper Minecraft server (1.13+)
 - Discord Bot Token
 
+## Discord Bot Setup
+
+Before installing the plugin, you need to create a Discord bot:
+
+1. Navigate to your [Discord Developer Portal Applications](https://discord.com/developers/applications) page
+2. Click "New Application"
+3. Enter the name "MineCord-Link" (or any name you prefer)
+4. Read and agree to the Discord Developer Terms of Service and Developer Policy
+5. Click "Create"
+6. (Optional) Add an App Icon and click "Save Changes"
+7. In the left sidebar, click "Bot"
+8. Under the "Build-A-Bot" section, click "Add Bot" if it's not already added
+9. Click "Reset Token"
+10. Click "Yes, do it!"
+11. Copy and securely save the token for later use in your plugin configuration
+12. Under "Privileged Gateway Intents", enable:
+    - PRESENCE INTENT
+    - SERVER MEMBERS INTENT
+    - MESSAGE CONTENT INTENT
+13. Click "Save Changes"
+14. In the left sidebar, click "Installation"
+15. Uncheck "User Install" under "Installation Contexts"
+16. Under "Default Install Settings Guild Install", select the following:
+    - In "Scopes": bot, applications.commands
+    - In "Permissions":
+        - View Channels
+        - Send Messages
+        - Embed Links
+        - Attach Files
+        - Read Message History
+        - Add Reactions
+        - Manage Webhooks
+18. Open the "Install Link" (make sure it is set to "Discord Provided Link") in a new tab or window
+19. Select the server you want to add the bot to and click "Authorize"
+20. Complete any additional verification steps if prompted
+
 ## Installation
 
 1. Download the latest release JAR file from the [Releases](https://github.com/TylerFlar/MineCord-Link/releases) page.
@@ -41,6 +77,16 @@ discord:
 ```
 
 **Note:** The `server_id`, `channel_id`, and `webhook_url` fields are automatically managed by the plugin. Do not modify these values manually, as they will be overwritten when you use the `/setup` command in Discord.
+
+## Setup
+
+After installing the plugin and configuring the Discord bot token, you need to run the setup command in Discord:
+
+1. In your Discord server, go to the channel where you want to set up the MineCord-Link bot.
+2. Type `/setup` and press Enter.
+3. If you're authorized, the bot will confirm that it has been set up for the current server and channel.
+
+This step is crucial as it establishes the connection between your Minecraft server and the specific Discord channel.
 
 ## Commands
 
