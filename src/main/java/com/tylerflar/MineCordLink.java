@@ -8,6 +8,7 @@ import com.tylerflar.listeners.ChatListener;
 import com.tylerflar.listeners.JoinListener;
 import com.tylerflar.listeners.LeaveListener;
 import com.tylerflar.listeners.PlayerDeathListener;
+import com.tylerflar.utils.UpdateChecker;
 import com.tylerflar.listeners.PlayerAdvancementListener;
 
 import club.minnced.discord.webhook.send.WebhookEmbed;
@@ -19,6 +20,8 @@ import com.tylerflar.commands.ReloadCommand;
 import java.util.List;
 import java.awt.Color;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Files;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Instant;
@@ -28,16 +31,19 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class MineCordLink extends JavaPlugin {
     private DiscordBot discordBot;
     private WebhookManager webhookManager;
+    private ChatListener chatListener;
 
     @Override
     public void onEnable() {
+        deleteOldJar();
         updateConfig();
-        this.discordBot = new DiscordBot(this); 
+        this.discordBot = new DiscordBot(this);
         discordBot.start();
         getCommand("minecordlink").setExecutor(new ReloadCommand(this, discordBot));
         getCommand("coords").setExecutor(new CoordsCommand(this));
         this.webhookManager = new WebhookManager(this);
-        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+        this.chatListener = new ChatListener(this);
+        getServer().getPluginManager().registerEvents(chatListener, this);
         getServer().getPluginManager().registerEvents(new JoinListener(this), this);
         getServer().getPluginManager().registerEvents(new LeaveListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
@@ -57,6 +63,13 @@ public class MineCordLink extends JavaPlugin {
                     null, // No avatar URL for webhook
                     embed);
         }, 20L); // 20 ticks = 1 second delay
+
+        // Check for updates
+        if (getConfig().getBoolean("auto_update_check", true)) {
+            new UpdateChecker(this).checkForUpdates();
+        } else {
+            getLogger().info("Automatic update checking is disabled.");
+        }
 
         getLogger().info("MineCordLink has been enabled!");
     }
@@ -125,6 +138,18 @@ public class MineCordLink extends JavaPlugin {
         }
     }
 
+    private void deleteOldJar() {
+        Path oldJarPath = getDataFolder().getParentFile().toPath().resolve("MineCord-Link-old.jar");
+        if (Files.exists(oldJarPath)) {
+            try {
+                Files.delete(oldJarPath);
+                getLogger().info("Deleted old MineCord-Link JAR file.");
+            } catch (IOException e) {
+                getLogger().warning("Failed to delete old MineCord-Link JAR file: " + e.getMessage());
+            }
+        }
+    }
+
     public List<String> getAuthorizedUsers() {
         return getConfig().getStringList("discord.authorized_users");
     }
@@ -139,5 +164,9 @@ public class MineCordLink extends JavaPlugin {
 
     public WebhookManager getWebhookManager() {
         return webhookManager;
+    }
+
+    public ChatListener getChatListener() {
+        return chatListener;
     }
 }

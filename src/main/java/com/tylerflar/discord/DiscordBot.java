@@ -14,10 +14,15 @@ import com.tylerflar.discord.commands.CommandManager;
 import com.tylerflar.discord.commands.PingCommand;
 import com.tylerflar.discord.commands.SetupCommand;
 import com.tylerflar.discord.commands.PlayersCommand;
+import com.tylerflar.discord.commands.CrossChatToggleCommand;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class DiscordBot extends ListenerAdapter {
     private final JavaPlugin plugin;
@@ -43,7 +48,7 @@ public class DiscordBot extends ListenerAdapter {
                             GatewayIntent.GUILD_WEBHOOKS,
                             GatewayIntent.GUILD_MEMBERS,
                             GatewayIntent.MESSAGE_CONTENT)
-                    .setActivity(Activity.playing("Minecraft"))
+                    .setActivity(null)
                     .addEventListeners(this, commandManager)
                     .build();
             jda.awaitReady();
@@ -53,9 +58,50 @@ public class DiscordBot extends ListenerAdapter {
             commandManager.updateGlobalCommands(jda);
 
             plugin.getLogger().info("Discord bot started and commands registered successfully!");
+            startActivityUpdater();
         } catch (Exception e) {
             plugin.getLogger().severe("Failed to start Discord bot: " + e.getMessage());
         }
+    }
+
+    private void startActivityUpdater() {
+        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            if (jda != null) {
+                String activity = getRandomActivity();
+                jda.getPresence().setActivity(Activity.playing(activity));
+            }
+        }, 0L, 20 * 60L); // Update every 1 minute (20 ticks * 60)
+    }
+
+    private String getRandomActivity() {
+        int onlinePlayers = plugin.getServer().getOnlinePlayers().size();
+        int maxPlayers = plugin.getServer().getMaxPlayers();
+        String serverVersion = plugin.getServer().getVersion();
+        String worldName = plugin.getServer().getWorlds().get(0).getName();
+
+        List<String> activities = Arrays.asList(
+            "with " + onlinePlayers + "/" + maxPlayers + " players",
+            "on " + serverVersion,
+            "in " + worldName,
+            "Minecraft",
+            "Block Party",
+            "Survival Mode",
+            "Creative Mode",
+            "Hardcore Mode",
+            "Crafting tables",
+            "Mining diamonds",
+            "Slaying dragons",
+            "Building castles",
+            "Exploring caves",
+            "Farming wheat",
+            "Taming wolves",
+            "Enchanting tools",
+            "Brewing potions",
+            "Nether adventures",
+            "End expeditions"
+        );
+
+        return activities.get(new Random().nextInt(activities.size()));
     }
 
     private void registerCommands() {
@@ -64,6 +110,7 @@ public class DiscordBot extends ListenerAdapter {
         commandManager.registerCommand(new AdminCommand(plugin));
         commandManager.registerCommand(new SetupCommand(plugin));
         commandManager.registerCommand(new PlayersCommand());
+        commandManager.registerCommand(new CrossChatToggleCommand(plugin));
     }
 
     public void stop() {
@@ -85,7 +132,9 @@ public class DiscordBot extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         String configChannelId = plugin.getConfig().getString("discord.channel_id");
-        if (configChannelId != null && !configChannelId.isEmpty()
+        boolean crossChatEnabled = plugin.getConfig().getBoolean("crosschat_enabled", true);
+
+        if (crossChatEnabled && configChannelId != null && !configChannelId.isEmpty()
                 && event.getChannel().getId().equals(configChannelId)) {
             if (!event.getMessage().isWebhookMessage()) {
                 StringBuilder attachmentInfo = new StringBuilder();

@@ -8,3 +8,4 @@ discord:
   server_id: ""
   channel_id: ""
   webhook_url: ""
+  crosschat_enabled: true
