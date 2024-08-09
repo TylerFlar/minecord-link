@@ -8,6 +8,7 @@ import com.tylerflar.listeners.ChatListener;
 import com.tylerflar.listeners.JoinListener;
 import com.tylerflar.listeners.LeaveListener;
 import com.tylerflar.listeners.PlayerDeathListener;
+import com.tylerflar.utils.UpdateChecker;
 import com.tylerflar.listeners.PlayerAdvancementListener;
 
 import club.minnced.discord.webhook.send.WebhookEmbed;
@@ -19,6 +20,8 @@ import com.tylerflar.commands.ReloadCommand;
 import java.util.List;
 import java.awt.Color;
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Files;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Instant;
@@ -31,8 +34,9 @@ public class MineCordLink extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        deleteOldJar();
         updateConfig();
-        this.discordBot = new DiscordBot(this); 
+        this.discordBot = new DiscordBot(this);
         discordBot.start();
         getCommand("minecordlink").setExecutor(new ReloadCommand(this, discordBot));
         getCommand("coords").setExecutor(new CoordsCommand(this));
@@ -57,6 +61,9 @@ public class MineCordLink extends JavaPlugin {
                     null, // No avatar URL for webhook
                     embed);
         }, 20L); // 20 ticks = 1 second delay
+
+        // Check for updates
+        new UpdateChecker(this).checkForUpdates();
 
         getLogger().info("MineCordLink has been enabled!");
     }
@@ -121,6 +128,18 @@ public class MineCordLink extends JavaPlugin {
                 getLogger().info("Config file updated with new options.");
             } catch (IOException e) {
                 getLogger().severe("Could not save updated config file: " + e.getMessage());
+            }
+        }
+    }
+
+    private void deleteOldJar() {
+        Path oldJarPath = getDataFolder().getParentFile().toPath().resolve("MineCord-Link-old.jar");
+        if (Files.exists(oldJarPath)) {
+            try {
+                Files.delete(oldJarPath);
+                getLogger().info("Deleted old MineCord-Link JAR file.");
+            } catch (IOException e) {
+                getLogger().warning("Failed to delete old MineCord-Link JAR file: " + e.getMessage());
             }
         }
     }
