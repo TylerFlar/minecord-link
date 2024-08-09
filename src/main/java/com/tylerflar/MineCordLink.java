@@ -65,7 +65,11 @@ public class MineCordLink extends JavaPlugin {
         }, 20L); // 20 ticks = 1 second delay
 
         // Check for updates
-        new UpdateChecker(this).checkForUpdates();
+        if (getConfig().getBoolean("auto_update_check", true)) {
+            new UpdateChecker(this).checkForUpdates();
+        } else {
+            getLogger().info("Automatic update checking is disabled.");
+        }
 
         getLogger().info("MineCordLink has been enabled!");
     }

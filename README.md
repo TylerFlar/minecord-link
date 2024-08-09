@@ -67,6 +67,7 @@ discord:
   authorized_users:
     - "123456789012345678" # Replace with actual Discord user IDs
     - "234567890123456789"
+  auto_update_check: true
   # DO NOT TOUCH THE FOLLOWING VALUES MANUALLY:
   # They are managed by the plugin and will be overwritten.
   server_id: ""
