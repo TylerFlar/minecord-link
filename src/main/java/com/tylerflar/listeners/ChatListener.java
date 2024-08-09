@@ -9,13 +9,19 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class ChatListener implements Listener {
     private final MineCordLink plugin;
+    private boolean crossChatEnabled;
 
     public ChatListener(MineCordLink plugin) {
         this.plugin = plugin;
+        this.crossChatEnabled = plugin.getConfig().getBoolean("crosschat_enabled", true);
     }
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
+        if (!crossChatEnabled) {
+            return;
+        }
+
         String playerName = event.getPlayer().getName();
         String message = ChatColor.stripColor(event.getMessage());
 
@@ -27,5 +33,9 @@ public class ChatListener implements Listener {
                 avatarUrl,
                 null // No embed
         );
+    }
+
+    public void setCrossChatEnabled(boolean enabled) {
+        this.crossChatEnabled = enabled;
     }
 }
