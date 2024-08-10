@@ -33,7 +33,7 @@ public class PlayerDeathListener implements Listener {
 
         plugin.getWebhookManager().sendMessage(
                 null, // No content, using embed instead
-                "Server",
+                null, // No username for webhook
                 null, // No avatar URL for webhook
                 embed);
     }

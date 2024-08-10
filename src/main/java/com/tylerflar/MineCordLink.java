@@ -41,13 +41,16 @@ public class MineCordLink extends JavaPlugin {
         discordBot.start();
         getCommand("minecordlink").setExecutor(new ReloadCommand(this, discordBot));
         getCommand("coords").setExecutor(new CoordsCommand(this));
-        this.webhookManager = new WebhookManager(this);
-        this.chatListener = new ChatListener(this);
-        getServer().getPluginManager().registerEvents(chatListener, this);
-        getServer().getPluginManager().registerEvents(new JoinListener(this), this);
-        getServer().getPluginManager().registerEvents(new LeaveListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerAdvancementListener(this), this);
+        // Wait for the bot to be ready before creating the WebhookManager
+        getServer().getScheduler().runTaskLater(this, () -> {
+            this.webhookManager = new WebhookManager(this, discordBot.getBotAvatarUrl(), discordBot.getBotUsername());
+            this.chatListener = new ChatListener(this);
+            getServer().getPluginManager().registerEvents(chatListener, this);
+            getServer().getPluginManager().registerEvents(new JoinListener(this), this);
+            getServer().getPluginManager().registerEvents(new LeaveListener(this), this);
+            getServer().getPluginManager().registerEvents(new PlayerDeathListener(this), this);
+            getServer().getPluginManager().registerEvents(new PlayerAdvancementListener(this), this);
+        }, 20L); // Wait 1 second (20 ticks) for the bot to be ready
 
         // Schedule the server start message to be sent after a short delay
         getServer().getScheduler().runTaskLater(this, () -> {

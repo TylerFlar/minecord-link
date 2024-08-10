@@ -28,6 +28,8 @@ public class DiscordBot extends ListenerAdapter {
     private final JavaPlugin plugin;
     private JDA jda;
     private final CommandManager commandManager;
+    private String botAvatarUrl;
+    private String botUsername;
 
     public DiscordBot(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -127,6 +129,8 @@ public class DiscordBot extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event) {
         plugin.getLogger().info("Logged in as " + event.getJDA().getSelfUser().getName());
+        this.botAvatarUrl = event.getJDA().getSelfUser().getEffectiveAvatarUrl();
+        this.botUsername = event.getJDA().getSelfUser().getName();
     }
 
     @Override
@@ -171,5 +175,13 @@ public class DiscordBot extends ListenerAdapter {
 
     public JDA getJDA() {
         return jda;
+    }
+
+    public String getBotAvatarUrl() {
+        return botAvatarUrl;
+    }
+
+    public String getBotUsername() {
+        return botUsername;
     }
 }
