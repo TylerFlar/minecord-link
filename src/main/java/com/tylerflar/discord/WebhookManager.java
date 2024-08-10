@@ -10,8 +10,12 @@ import java.awt.Color;
 
 public class WebhookManager {
     private WebhookClient client;
+    private String botAvatarUrl;
+    private String botUsername;
 
-    public WebhookManager(JavaPlugin plugin) {
+    public WebhookManager(JavaPlugin plugin, String botAvatarUrl, String botUsername) {
+        this.botAvatarUrl = botAvatarUrl;
+        this.botUsername = botUsername;
         String webhookUrl = plugin.getConfig().getString("discord.webhook_url");
         if (webhookUrl == null || webhookUrl.isEmpty()) {
             plugin.getLogger().severe("Webhook URL is not set in the config!");
@@ -31,9 +35,13 @@ public class WebhookManager {
         }
         if (username != null && !username.isEmpty()) {
             builder.setUsername(username);
+        } else {
+            builder.setUsername(botUsername);
         }
         if (avatarUrl != null && !avatarUrl.isEmpty()) {
             builder.setAvatarUrl(avatarUrl);
+        } else {
+            builder.setAvatarUrl(botAvatarUrl);
         }
         if (embed != null) {
             builder.addEmbeds(embed);
