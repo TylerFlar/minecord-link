@@ -164,7 +164,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-[MIT License](LICENSE)
+[GNU Lesser General Public License v3.0](LICENSE)
 
 ## Disclaimer
 
