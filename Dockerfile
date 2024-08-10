@@ -17,6 +17,7 @@ RUN mkdir -p /minecraft && cd /minecraft && \
 RUN echo '#!/bin/sh' > /usr/local/bin/build-and-run-minecraft && \
     echo 'cd /workspaces/minecord-link && mvn clean package && \
     mkdir -p /minecraft/plugins && \
+    rm -f /minecraft/plugins/*.jar && \
     cp target/minecord-link-*.jar /minecraft/plugins/ && \
     ln -sf /minecraft/plugins/MineCord-Link/config.yml /workspaces/minecord-link/server-config.yml && \
     cd /minecraft && java -jar spigot-1.21.jar nogui' >> /usr/local/bin/build-and-run-minecraft && \
