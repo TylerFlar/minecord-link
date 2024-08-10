@@ -34,7 +34,7 @@ public class PlayerAdvancementListener implements Listener {
             String avatarUrl = "https://mc-heads.net/avatar/" + playerName;
 
             WebhookEmbed embed = new WebhookEmbedBuilder()
-                    .setColor(Color.decode("F1C40F").getRGB())
+                    .setColor(Color.decode("#F1C40F").getRGB())
                     .setAuthor(new WebhookEmbed.EmbedAuthor(playerName, avatarUrl, null))
                     .setDescription(playerName + " has made the advancement **" + advancementName + "**!")
                     .setTimestamp(Instant.now())
