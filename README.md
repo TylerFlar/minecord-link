@@ -1,12 +1,21 @@
-# MineCord-Link
+# MineCord Link
 
-MineCord-Link is a Minecraft plugin that links your Minecraft server to Discord, enabling seamless communication between the two platforms.
+MineCord Link is a Minecraft plugin that links your Minecraft server to Discord, enabling seamless communication between the two platforms.
 
 ## Features
 
-- Connect your Minecraft server chat with a Discord channel.
-- Send Minecraft server events (player join/leave, deaths, achievements, etc.) to Discord.
-- Execute Minecraft commands from Discord.
+- Connect your Minecraft server chat with a Discord channel
+- Send Minecraft server events to Discord:
+  - Player join/leave notifications
+  - Player death messages
+  - Player advancement achievements
+- Execute Minecraft commands from Discord
+- Share player coordinates between Minecraft and Discord
+- Automatic plugin updates
+- Cross-chat toggle to enable/disable chat synchronization
+- Display online players list in Discord
+- Server start/stop notifications in Discord
+- Customizable bot activity status
 
 ## Requirements
 
@@ -20,7 +29,7 @@ Before installing the plugin, you need to create a Discord bot:
 
 1. Navigate to your [Discord Developer Portal Applications](https://discord.com/developers/applications) page
 2. Click "New Application"
-3. Enter the name "MineCord-Link" (or any name you prefer)
+3. Enter the name "MineCord Link" (or any name you prefer)
 4. Read and agree to the Discord Developer Terms of Service and Developer Policy
 5. Click "Create"
 6. (Optional) Add an App Icon and click "Save Changes"
@@ -81,7 +90,7 @@ discord:
 
 After installing the plugin and configuring the Discord bot token, you need to run the setup command in Discord:
 
-1. In your Discord server, go to the channel where you want to set up the MineCord-Link bot.
+1. In your Discord server, go to the channel where you want to set up the MineCord Link bot.
 2. Type `/setup` and press Enter.
 3. If you're authorized, the bot will confirm that it has been set up for the current server and channel.
 
