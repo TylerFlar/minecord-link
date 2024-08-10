@@ -43,11 +43,27 @@ jobs:
       with:
         name: MineCord-Link
 
-    - name: Get version
+    - name: Get current version
       id: get_version
       run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
 
+    - name: Get latest release version
+      id: get_latest_release
+      run: |
+        latest_release=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
+        echo "LATEST_VERSION=${latest_release#v}" >> $GITHUB_OUTPUT
+
+    - name: Compare versions
+      id: compare_versions
+      run: |
+        if [ "${{ steps.get_version.outputs.VERSION }}" != "${{ steps.get_latest_release.outputs.LATEST_VERSION }}" ]; then
+          echo "NEW_VERSION=true" >> $GITHUB_OUTPUT
+        else
+          echo "NEW_VERSION=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Create Release
+      if: steps.compare_versions.outputs.NEW_VERSION == 'true'
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -59,6 +75,7 @@ jobs:
         prerelease: false
 
     - name: Upload Release Asset
+      if: steps.compare_versions.outputs.NEW_VERSION == 'true'
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
