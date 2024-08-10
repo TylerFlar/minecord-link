@@ -106,6 +106,20 @@ For more details on commands and permissions, see the `plugin.yml` file.
 
 - `minecordlink.reload` - Allows reloading the MineCord-Link configuration (default: op)
 
+## Common Issues
+
+### Bot is online but no commands are displayed
+
+If the bot is online in your Discord server, but you don't see any commands when typing `/`, try the following steps:
+
+1. Kick the bot from your server.
+2. Grab the "Install Link" used in step 18 of the [Discord Bot Setup](#discord-bot-setup) section.
+3. Open the link in a new tab or window.
+4. Select the server you want to add the bot to and click "Authorize".
+5. Complete any additional verification steps if prompted.
+
+If you encounter any other issues or need further assistance, please [open an issue](https://github.com/TylerFlar/MineCord-Link/issues) on our GitHub repository.
+
 ## Development
 
 This project uses Maven for dependency management and building. To set up a development environment:
