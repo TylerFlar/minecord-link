@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -80,19 +81,54 @@ public class UpdateChecker {
             Path newJarPath = pluginsFolder.resolve("MineCord-Link-" + version + ".jar");
             Path oldJarPath = pluginsFolder.resolve("MineCord-Link-old.jar");
 
+            // Delete the old backup if it exists
+            Files.deleteIfExists(oldJarPath);
+
+            // Find the current JAR file
+            Path currentJarPath = Files.list(pluginsFolder)
+                    .filter(path -> path.getFileName().toString().toLowerCase().startsWith("minecord-link"))
+                    .filter(path -> path.getFileName().toString().toLowerCase().endsWith(".jar"))
+                    .findFirst()
+                    .orElseThrow(() -> new IOException("Current MineCord-Link JAR not found"));
+
             // Rename the current JAR to MineCord-Link-old.jar
-            Files.move(pluginsFolder.resolve(plugin.getName() + ".jar"), oldJarPath, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(currentJarPath, oldJarPath, StandardCopyOption.REPLACE_EXISTING);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
 
             if (conn.getResponseCode() == 200) {
+                // Download the new version
                 Files.copy(conn.getInputStream(), newJarPath, StandardCopyOption.REPLACE_EXISTING);
+
                 plugin.getLogger().info("Update downloaded successfully. It will be applied on the next server restart.");
                 return true;
+            } else {
+                plugin.getLogger().warning("Failed to download update. Server responded with code: " + conn.getResponseCode());
+                // Revert the old JAR back to its original name
+                Files.move(oldJarPath, currentJarPath, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
             plugin.getLogger().warning("Failed to download update: " + e.getMessage());
+            e.printStackTrace(); // Log the full stack trace for debugging
+            
+            // Attempt to revert the old JAR back to its original name if an exception occurred
+            try {
+                Path currentJarPath = Files.list(plugin.getDataFolder().getParentFile().toPath())
+                        .filter(path -> path.getFileName().toString().toLowerCase().startsWith("minecord-link"))
+                        .filter(path -> path.getFileName().toString().toLowerCase().endsWith(".jar"))
+                        .findFirst()
+                        .orElse(null);
+                
+                if (currentJarPath != null) {
+                    Path oldJarPath = plugin.getDataFolder().getParentFile().toPath().resolve("MineCord-Link-old.jar");
+                    if (Files.exists(oldJarPath)) {
+                        Files.move(oldJarPath, currentJarPath, StandardCopyOption.REPLACE_EXISTING);
+                    }
+                }
+            } catch (IOException ioException) {
+                plugin.getLogger().warning("Failed to revert JAR file: " + ioException.getMessage());
+            }
         }
         return false;
     }
