@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 
 import com.tylerflar.discord.commands.CommandManager;
 
@@ -21,10 +22,10 @@ import java.util.Random;
 
 import com.tylerflar.MineCordLink;
 
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.URI;
 import java.io.IOException;
 
 public class DiscordBot extends ListenerAdapter {
@@ -33,7 +34,6 @@ public class DiscordBot extends ListenerAdapter {
     private final CommandManager commandManager;
     private String botAvatarUrl;
     private String botUsername;
-
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public DiscordBot(MineCordLink plugin) {
@@ -165,6 +165,26 @@ public class DiscordBot extends ListenerAdapter {
                         attachmentInfo.toString();
 
                 Bukkit.getScheduler().runTask(plugin, () -> Bukkit.broadcastMessage(message));
+            }
+        }
+    }
+
+    @Override
+    public void onMessageUpdate(MessageUpdateEvent event) {
+        String configChannelId = plugin.getConfig().getString("discord.channel_id");
+        boolean crossChatEnabled = plugin.getConfig().getBoolean("crosschat_enabled", true);
+
+        if (crossChatEnabled && configChannelId != null
+                && event.getChannel().getId().equals(configChannelId)) {
+            if (!event.getMessage().isWebhookMessage()) {
+                String discordUsername = event.getAuthor().getName();
+                String minecraftUsername = getLinkedMinecraftUsername(event.getAuthor().getId());
+                String displayName = discordUsername + (minecraftUsername != null ? " (" + minecraftUsername + ")" : "");
+
+                String editedMessage = ChatColor.DARK_AQUA + displayName + " edited: " +
+                        ChatColor.WHITE + event.getMessage().getContentDisplay();
+
+                Bukkit.getScheduler().runTask(plugin, () -> Bukkit.broadcastMessage(editedMessage));
             }
         }
     }
