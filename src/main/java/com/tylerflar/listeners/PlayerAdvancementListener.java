@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class PlayerAdvancementListener implements Listener {
     private final MineCordLink plugin;
@@ -33,10 +34,16 @@ public class PlayerAdvancementListener implements Listener {
         if (advancementName != "") {
             String avatarUrl = "https://mc-heads.net/avatar/" + playerName;
 
+            // Get linked Discord ID
+            UUID playerUUID = event.getPlayer().getUniqueId();
+            String discordId = plugin.getLinkedDiscordId(playerUUID);
+            String discordMention = discordId != null ? "<@" + discordId + ">" : "";
+            String displayName = playerName + (discordMention.isEmpty() ? "" : " (" + discordMention + ")");
+
             WebhookEmbed embed = new WebhookEmbedBuilder()
                     .setColor(Color.decode("#F1C40F").getRGB())
                     .setAuthor(new WebhookEmbed.EmbedAuthor(playerName, avatarUrl, null))
-                    .setDescription(playerName + " has made the advancement **" + advancementName + "**!")
+                    .setDescription(displayName + " has made the advancement **" + advancementName + "**!")
                     .setTimestamp(Instant.now())
                     .build();
 

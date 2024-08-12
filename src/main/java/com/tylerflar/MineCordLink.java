@@ -1,6 +1,9 @@
 package com.tylerflar;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import com.tylerflar.discord.DiscordBot;
 import com.tylerflar.discord.WebhookManager;
 import com.tylerflar.discord.commands.CommandManager;
@@ -16,10 +19,16 @@ import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 
 import com.tylerflar.commands.CoordsCommand;
 import com.tylerflar.commands.ReloadCommand;
+import com.tylerflar.commands.LinkDiscordCommand;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.HashMap;
 import java.awt.Color;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.nio.file.Path;
 import java.nio.file.Files;
 import java.io.IOException;
@@ -32,6 +41,8 @@ public class MineCordLink extends JavaPlugin {
     private DiscordBot discordBot;
     private WebhookManager webhookManager;
     private ChatListener chatListener;
+    private Map<String, UUID> linkedAccounts = new HashMap<>();
+    private Map<String, String> linkingCodes = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -41,6 +52,7 @@ public class MineCordLink extends JavaPlugin {
         discordBot.start();
         getCommand("minecordlink").setExecutor(new ReloadCommand(this, discordBot));
         getCommand("coords").setExecutor(new CoordsCommand(this));
+        getCommand("linkdiscord").setExecutor(new LinkDiscordCommand(this));
         // Wait for the bot to be ready before creating the WebhookManager
         getServer().getScheduler().runTaskLater(this, () -> {
             this.webhookManager = new WebhookManager(this, discordBot.getBotAvatarUrl(), discordBot.getBotUsername());
@@ -74,6 +86,8 @@ public class MineCordLink extends JavaPlugin {
             getLogger().info("Automatic update checking is disabled.");
         }
 
+        loadLinkedAccounts();
+
         getLogger().info("MineCordLink has been enabled!");
     }
 
@@ -96,6 +110,7 @@ public class MineCordLink extends JavaPlugin {
                     embed);
             webhookManager.shutdown();
         }
+        saveLinkedAccounts();
         getLogger().info("MineCordLink has been disabled!");
     }
 
@@ -171,5 +186,59 @@ public class MineCordLink extends JavaPlugin {
 
     public ChatListener getChatListener() {
         return chatListener;
+    }
+
+    public void saveLinkedAccounts() {
+        File file = new File(getDataFolder(), "linked_accounts.json");
+        try (FileWriter writer = new FileWriter(file)) {
+            new JSONObject(linkedAccounts).write(writer);
+        } catch (IOException e) {
+            getLogger().severe("Failed to save linked accounts: " + e.getMessage());
+        }
+    }
+
+    public void loadLinkedAccounts() {
+        File file = new File(getDataFolder(), "linked_accounts.json");
+        if (file.exists()) {
+            try (FileReader reader = new FileReader(file)) {
+                JSONObject json = new JSONObject(new JSONTokener(reader));
+                for (String key : json.keySet()) {
+                    linkedAccounts.put(key, UUID.fromString(json.getString(key)));
+                }
+            } catch (IOException e) {
+                getLogger().severe("Failed to load linked accounts: " + e.getMessage());
+            }
+        }
+    }
+
+    public Map<String, UUID> getLinkedAccounts() {
+        return linkedAccounts;
+    }
+
+    public void linkAccounts(String discordId, UUID minecraftUUID) {
+        linkedAccounts.put(discordId, minecraftUUID);
+        saveLinkedAccounts();
+    }
+
+    public void unlinkAccounts(String discordId) {
+        linkedAccounts.remove(discordId);
+        saveLinkedAccounts();
+    }
+
+    public UUID getLinkedMinecraftUUID(String discordId) {
+        return linkedAccounts.get(discordId);
+    }
+
+    public String getLinkedDiscordId(UUID minecraftUUID) {
+        for (Map.Entry<String, UUID> entry : linkedAccounts.entrySet()) {
+            if (entry.getValue().equals(minecraftUUID)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    public Map<String, String> getLinkingCodes() {
+        return linkingCodes;
     }
 }
