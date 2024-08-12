@@ -1,5 +1,6 @@
 package com.tylerflar.discord.commands;
 
+import com.tylerflar.MineCordLink;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -11,16 +12,27 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.awt.Color;
 
 public class CommandManager extends ListenerAdapter {
-    private final JavaPlugin plugin;
+    private final MineCordLink plugin;
     private final List<Command> commands = new ArrayList<>();
 
-    public CommandManager(JavaPlugin plugin) {
+    public CommandManager(MineCordLink plugin) {
         this.plugin = plugin;
+        registerCommands();
+    }
+
+    private void registerCommands() {
         registerCommand(new SetupCommand(plugin));
+        registerCommand(new LinkMinecraftCommand(plugin));
+        registerCommand(new PingCommand());
+        registerCommand(new PlayersCommand());
+        registerCommand(new CrossChatToggleCommand(plugin));
+        registerCommand(new AdminCommand(plugin));
     }
 
     public void registerCommand(Command command) {

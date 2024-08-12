@@ -18,6 +18,7 @@ MineCord Link is a Minecraft plugin that links your Minecraft server to Discord,
 - Display online players list in Discord
 - Server start/stop notifications in Discord
 - Customizable bot activity status
+- Link Minecraft and Discord accounts
 
 ## Requirements
 
@@ -103,6 +104,7 @@ This step is crucial as it establishes the connection between your Minecraft ser
 ### Minecraft Commands
 - `/minecordlink reload` - Reloads the plugin configuration (requires `minecordlink.reload` permission)
 - `/coords [location name]` - Share your current coordinates in the game and Discord
+- `/linkdiscord` - Generate a code to link your Minecraft account to Discord
 
 ### Discord Commands
 - `/ping` - Responds with "Pong!" to check if the bot is active
@@ -110,6 +112,7 @@ This step is crucial as it establishes the connection between your Minecraft ser
 - `/setup` - Sets up the bot for the current server and channel (requires Discord Administrator permission)
 - `/players` - Displays a list of online players
 - `/crosschat` - Toggles the crosschat feature on or off (only for authorized users)
+- `/linkminecraft [code]` - Link your Discord account to your Minecraft account or generate a link code
 
 For more details on commands and permissions, see the `plugin.yml` file.
 
