@@ -21,12 +21,20 @@ import java.util.Random;
 
 import com.tylerflar.MineCordLink;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.io.IOException;
+
 public class DiscordBot extends ListenerAdapter {
     private final MineCordLink plugin;
     private JDA jda;
     private final CommandManager commandManager;
     private String botAvatarUrl;
     private String botUsername;
+
+    private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public DiscordBot(MineCordLink plugin) {
         this.plugin = plugin;
@@ -132,18 +140,20 @@ public class DiscordBot extends ListenerAdapter {
 
                 // Handle embeds
                 if (!event.getMessage().getEmbeds().isEmpty()) {
-                    attachmentInfo.append(isEmpty ? "[Attached " : "\n[Sent ").append("an embed]");
+                    attachmentInfo.append(isEmpty ? "" : " ").append("[embed]");
                 }
 
                 // Handle stickers
                 if (!event.getMessage().getStickers().isEmpty()) {
-                    attachmentInfo.append(isEmpty ? "[Attached " : "\n[Sent ").append("a sticker]");
+                    attachmentInfo.append(isEmpty ? "" : " ").append("[sticker]");
                 }
 
                 // Handle attachments
                 for (Message.Attachment attachment : event.getMessage().getAttachments()) {
-                    attachmentInfo.append(isEmpty ? "[Attached " : "\n[Sent ")
-                            .append(attachment.getContentType()).append("]");
+                    String shortUrl = shortenUrl(attachment.getUrl());
+                    attachmentInfo.append(isEmpty ? "" : " ")
+                            .append(ChatColor.BLUE).append("[").append(attachment.getFileName()).append("]")
+                            .append(ChatColor.GRAY).append(" (").append(shortUrl).append(")");
                 }
 
                 String discordUsername = event.getAuthor().getName();
@@ -152,10 +162,26 @@ public class DiscordBot extends ListenerAdapter {
 
                 String message = ChatColor.DARK_AQUA + displayName + ": " +
                         ChatColor.WHITE + event.getMessage().getContentDisplay() +
-                        ChatColor.RED + attachmentInfo.toString();
+                        attachmentInfo.toString();
 
                 Bukkit.getScheduler().runTask(plugin, () -> Bukkit.broadcastMessage(message));
             }
+        }
+    }
+
+    private String shortenUrl(String longUrl) {
+        try {
+            String apiUrl = "https://tinyurl.com/api-create.php?url=" + longUrl;
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(apiUrl))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.body();
+        } catch (IOException | InterruptedException e) {
+            plugin.getLogger().warning("Failed to shorten URL: " + e.getMessage());
+            return longUrl; // Return the original URL if shortening fails
         }
     }
 
