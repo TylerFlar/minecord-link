@@ -46,7 +46,6 @@ public class MineCordLink extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        deleteOldJar();
         updateConfig();
         this.discordBot = new DiscordBot(this);
         discordBot.start();
@@ -152,18 +151,6 @@ public class MineCordLink extends JavaPlugin {
                 getLogger().info("Config file updated with new options.");
             } catch (IOException e) {
                 getLogger().severe("Could not save updated config file: " + e.getMessage());
-            }
-        }
-    }
-
-    private void deleteOldJar() {
-        Path oldJarPath = getDataFolder().getParentFile().toPath().resolve("MineCord-Link-old.jar");
-        if (Files.exists(oldJarPath)) {
-            try {
-                Files.delete(oldJarPath);
-                getLogger().info("Deleted old MineCord-Link JAR file.");
-            } catch (IOException e) {
-                getLogger().warning("Failed to delete old MineCord-Link JAR file: " + e.getMessage());
             }
         }
     }
