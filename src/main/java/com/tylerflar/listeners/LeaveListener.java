@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.awt.Color;
 import java.time.Instant;
+import java.util.UUID;
 
 public class LeaveListener implements Listener {
     private final MineCordLink plugin;
@@ -23,10 +24,16 @@ public class LeaveListener implements Listener {
         String playerName = event.getPlayer().getName();
         String avatarUrl = "https://mc-heads.net/avatar/" + playerName;
 
+        // Get linked Discord ID
+        UUID playerUUID = event.getPlayer().getUniqueId();
+        String discordId = plugin.getLinkedDiscordId(playerUUID);
+        String discordMention = discordId != null ? "<@" + discordId + ">" : "";
+        String displayName = playerName + (discordMention.isEmpty() ? "" : " (" + discordMention + ")");
+
         WebhookEmbed embed = new WebhookEmbedBuilder()
                 .setColor(Color.decode("#95A5A6").getRGB())
                 .setAuthor(new WebhookEmbed.EmbedAuthor(playerName, avatarUrl, null))
-                .setDescription(playerName + " has left the server!")
+                .setDescription(displayName + " has left the server!")
                 .setTimestamp(Instant.now())
                 .build();
 

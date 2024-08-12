@@ -1,7 +1,7 @@
 package com.tylerflar.discord;
 
-import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -9,29 +9,26 @@ import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
-import com.tylerflar.discord.commands.AdminCommand;
 import com.tylerflar.discord.commands.CommandManager;
-import com.tylerflar.discord.commands.PingCommand;
-import com.tylerflar.discord.commands.SetupCommand;
-import com.tylerflar.discord.commands.PlayersCommand;
-import com.tylerflar.discord.commands.CrossChatToggleCommand;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.Arrays;
+import java.util.UUID;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Random;
 
+import com.tylerflar.MineCordLink;
+
 public class DiscordBot extends ListenerAdapter {
-    private final JavaPlugin plugin;
+    private final MineCordLink plugin;
     private JDA jda;
     private final CommandManager commandManager;
     private String botAvatarUrl;
     private String botUsername;
 
-    public DiscordBot(JavaPlugin plugin) {
+    public DiscordBot(MineCordLink plugin) {
         this.plugin = plugin;
         this.commandManager = new CommandManager(plugin);
     }
@@ -55,8 +52,6 @@ public class DiscordBot extends ListenerAdapter {
                     .build();
             jda.awaitReady();
 
-            // Register all commands globally
-            registerCommands();
             commandManager.updateGlobalCommands(jda);
 
             plugin.getLogger().info("Discord bot started and commands registered successfully!");
@@ -106,15 +101,6 @@ public class DiscordBot extends ListenerAdapter {
         return activities.get(new Random().nextInt(activities.size()));
     }
 
-    private void registerCommands() {
-        commandManager.clearCommands();
-        commandManager.registerCommand(new PingCommand());
-        commandManager.registerCommand(new AdminCommand(plugin));
-        commandManager.registerCommand(new SetupCommand(plugin));
-        commandManager.registerCommand(new PlayersCommand());
-        commandManager.registerCommand(new CrossChatToggleCommand(plugin));
-    }
-
     public void stop() {
         if (jda != null) {
             jda.shutdown();
@@ -138,7 +124,7 @@ public class DiscordBot extends ListenerAdapter {
         String configChannelId = plugin.getConfig().getString("discord.channel_id");
         boolean crossChatEnabled = plugin.getConfig().getBoolean("crosschat_enabled", true);
 
-        if (crossChatEnabled && configChannelId != null && !configChannelId.isEmpty()
+        if (crossChatEnabled && configChannelId != null
                 && event.getChannel().getId().equals(configChannelId)) {
             if (!event.getMessage().isWebhookMessage()) {
                 StringBuilder attachmentInfo = new StringBuilder();
@@ -160,13 +146,25 @@ public class DiscordBot extends ListenerAdapter {
                             .append(attachment.getContentType()).append("]");
                 }
 
-                String message = ChatColor.DARK_AQUA + event.getAuthor().getName() + ": " +
+                String discordUsername = event.getAuthor().getName();
+                String minecraftUsername = getLinkedMinecraftUsername(event.getAuthor().getId());
+                String displayName = discordUsername + (minecraftUsername != null ? " (" + minecraftUsername + ")" : "");
+
+                String message = ChatColor.DARK_AQUA + displayName + ": " +
                         ChatColor.WHITE + event.getMessage().getContentDisplay() +
                         ChatColor.RED + attachmentInfo.toString();
 
                 Bukkit.getScheduler().runTask(plugin, () -> Bukkit.broadcastMessage(message));
             }
         }
+    }
+
+    private String getLinkedMinecraftUsername(String discordId) {
+        UUID minecraftUUID = plugin.getLinkedMinecraftUUID(discordId);
+        if (minecraftUUID != null) {
+            return Bukkit.getOfflinePlayer(minecraftUUID).getName();
+        }
+        return null;
     }
 
     public CommandManager getCommandManager() {

@@ -10,6 +10,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 
 import java.awt.Color;
 import java.time.Instant;
+import java.util.UUID;
 
 public class PlayerDeathListener implements Listener {
     private final MineCordLink plugin;
@@ -24,10 +25,16 @@ public class PlayerDeathListener implements Listener {
         String deathMessage = event.getDeathMessage();
         String avatarUrl = "https://mc-heads.net/avatar/" + playerName;
 
+        // Get linked Discord ID
+        UUID playerUUID = event.getEntity().getUniqueId();
+        String discordId = plugin.getLinkedDiscordId(playerUUID);
+        String discordMention = discordId != null ? "<@" + discordId + ">" : "";
+        String displayName = playerName + (discordMention.isEmpty() ? "" : " (" + discordMention + ")");
+
         WebhookEmbed embed = new WebhookEmbedBuilder()
                 .setColor(Color.decode("#2C3E50").getRGB())
                 .setAuthor(new WebhookEmbed.EmbedAuthor(playerName, avatarUrl, null))
-                .setDescription(deathMessage != null ? deathMessage : playerName + " died")
+                .setDescription(deathMessage != null ? deathMessage.replace(playerName, displayName) : displayName + " died")
                 .setTimestamp(Instant.now())
                 .build();
 

@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.awt.Color;
 import java.time.Instant;
+import java.util.UUID;
 
 public class JoinListener implements Listener {
     private final MineCordLink plugin;
@@ -23,10 +24,15 @@ public class JoinListener implements Listener {
         String playerName = event.getPlayer().getName();
         String avatarUrl = "https://mc-heads.net/avatar/" + playerName;
 
+        UUID playerUUID = event.getPlayer().getUniqueId();
+        String discordId = plugin.getLinkedDiscordId(playerUUID);
+        String discordMention = discordId != null ? "<@" + discordId + ">" : "";
+        String displayName = playerName + (discordMention.isEmpty() ? "" : " (" + discordMention + ")");
+
         WebhookEmbed embed = new WebhookEmbedBuilder()
                 .setColor(Color.decode("#2ECC71").getRGB())
                 .setAuthor(new WebhookEmbed.EmbedAuthor(playerName, avatarUrl, null))
-                .setDescription(playerName + " has joined the server!")
+                .setDescription(displayName + " has joined the server!")
                 .setTimestamp(Instant.now())
                 .build();
 
