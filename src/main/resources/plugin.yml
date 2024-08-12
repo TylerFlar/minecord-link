@@ -13,8 +13,8 @@ commands:
     description: Share your current coordinates
     usage: /<command> [location name]
   linkdiscord:
-    description: Generate a code to link your Minecraft account to Discord
-    usage: /<command>
+    description: Generate or enter a code to link your Minecraft account to Discord
+    usage: /<command> [code]
 permissions:
   minecordlink.reload:
     description: Allows reloading the MineCord-Link configuration
