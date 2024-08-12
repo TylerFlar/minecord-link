@@ -104,7 +104,7 @@ This step is crucial as it establishes the connection between your Minecraft ser
 ### Minecraft Commands
 - `/minecordlink reload` - Reloads the plugin configuration (requires `minecordlink.reload` permission)
 - `/coords [location name]` - Share your current coordinates in the game and Discord
-- `/linkdiscord` - Generate a code to link your Minecraft account to Discord
+- `/linkdiscord [code]` - Generate or enter a code to link your Minecraft account to Discord
 
 ### Discord Commands
 - `/ping` - Responds with "Pong!" to check if the bot is active
