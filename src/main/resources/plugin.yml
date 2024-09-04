@@ -6,16 +6,23 @@ description: Link your minecraft server to discord
 authors: [TylerFlar]
 website: https://github.com/TylerFlar/MineCord-Link
 commands:
-  minecordlink:
-    description: Reload the MineCord-Link configuration
+  mcl:
+    description: MineCord-Link main command
     usage: /<command> reload
-  coords:
+  mclcoords:
     description: Share your current coordinates
     usage: /<command> [location name]
-  linkdiscord:
+  mcllinkdiscord:
     description: Generate or enter a code to link your Minecraft account to Discord
     usage: /<command> [code]
+  mcltogglelistener:
+    description: Toggle individual listeners on or off
+    usage: /<command> <listener> <on|off>
+    permission: minecordlink.togglelistener
 permissions:
   minecordlink.reload:
     description: Allows reloading the MineCord-Link configuration
+    default: op
+  minecordlink.togglelistener:
+    description: Allows toggling individual listeners
     default: op

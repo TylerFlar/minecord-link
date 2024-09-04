@@ -20,7 +20,7 @@ public class ChatListener implements Listener {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        if (!crossChatEnabled) {
+        if (!plugin.isListenerEnabled("chat") || !crossChatEnabled) {
             return;
         }
 

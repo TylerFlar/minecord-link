@@ -85,6 +85,15 @@ discord:
   server_id: ""
   channel_id: ""
   webhook_url: ""
+  crosschat_enabled: true
+
+listeners:
+  chat_enabled: true
+  join_enabled: true
+  leave_enabled: true
+  death_enabled: true
+  advancement_enabled: true
+
 ```
 
 **Note:** The `server_id`, `channel_id`, and `webhook_url` fields are automatically managed by the plugin. Do not modify these values manually, as they will be overwritten when you use the `/setup` command in Discord.
@@ -102,9 +111,10 @@ This step is crucial as it establishes the connection between your Minecraft ser
 ## Commands
 
 ### Minecraft Commands
-- `/minecordlink reload` - Reloads the plugin configuration (requires `minecordlink.reload` permission)
-- `/coords [location name]` - Share your current coordinates in the game and Discord
-- `/linkdiscord [code]` - Generate or enter a code to link your Minecraft account to Discord
+- `/mcl reload` - Reloads the plugin configuration (requires `minecordlink.reload` permission)
+- `/mclcoords [location name]` - Share your current coordinates in the game and Discord
+- `/mcllinkdiscord [code]` - Generate or enter a code to link your Minecraft account to Discord
+- `/mcltogglelistener <listener> <on|off>` - Toggle individual listeners on or off (requires `minecordlink.togglelistener` permission)
 
 ### Discord Commands
 - `/ping` - Responds with "Pong!" to check if the bot is active
@@ -119,6 +129,7 @@ For more details on commands and permissions, see the `plugin.yml` file.
 ## Permissions
 
 - `minecordlink.reload` - Allows reloading the MineCord-Link configuration (default: op)
+- `minecordlink.togglelistener` - Allows toggling individual listeners (default: op)
 
 ## Common Issues
 

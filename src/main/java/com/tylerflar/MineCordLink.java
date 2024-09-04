@@ -20,6 +20,7 @@ import club.minnced.discord.webhook.send.WebhookEmbedBuilder;
 import com.tylerflar.commands.CoordsCommand;
 import com.tylerflar.commands.ReloadCommand;
 import com.tylerflar.commands.LinkDiscordCommand;
+import com.tylerflar.commands.ToggleListenerCommand;
 
 import java.util.List;
 import java.util.Map;
@@ -29,8 +30,6 @@ import java.awt.Color;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.nio.file.Path;
-import java.nio.file.Files;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Instant;
@@ -43,15 +42,21 @@ public class MineCordLink extends JavaPlugin {
     private ChatListener chatListener;
     private Map<String, UUID> linkedAccounts = new HashMap<>();
     private Map<String, String> linkingCodes = new HashMap<>();
+    private boolean chatEnabled;
+    private boolean joinEnabled;
+    private boolean leaveEnabled;
+    private boolean deathEnabled;
+    private boolean advancementEnabled;
 
     @Override
     public void onEnable() {
         updateConfig();
         this.discordBot = new DiscordBot(this);
         discordBot.start();
-        getCommand("minecordlink").setExecutor(new ReloadCommand(this, discordBot));
-        getCommand("coords").setExecutor(new CoordsCommand(this));
-        getCommand("linkdiscord").setExecutor(new LinkDiscordCommand(this));
+        getCommand("mcl").setExecutor(new ReloadCommand(this, discordBot));
+        getCommand("mclcoords").setExecutor(new CoordsCommand(this));
+        getCommand("mcllinkdiscord").setExecutor(new LinkDiscordCommand(this));
+        getCommand("mcltogglelistener").setExecutor(new ToggleListenerCommand(this));
         // Wait for the bot to be ready before creating the WebhookManager
         getServer().getScheduler().runTaskLater(this, () -> {
             this.webhookManager = new WebhookManager(this, discordBot.getBotAvatarUrl(), discordBot.getBotUsername());
@@ -86,6 +91,7 @@ public class MineCordLink extends JavaPlugin {
         }
 
         loadLinkedAccounts();
+        loadListenerStates();
 
         getLogger().info("MineCordLink has been enabled!");
     }
@@ -227,5 +233,56 @@ public class MineCordLink extends JavaPlugin {
 
     public Map<String, String> getLinkingCodes() {
         return linkingCodes;
+    }
+
+    private void loadListenerStates() {
+        chatEnabled = getConfig().getBoolean("listeners.chat_enabled", true);
+        joinEnabled = getConfig().getBoolean("listeners.join_enabled", true);
+        leaveEnabled = getConfig().getBoolean("listeners.leave_enabled", true);
+        deathEnabled = getConfig().getBoolean("listeners.death_enabled", true);
+        advancementEnabled = getConfig().getBoolean("listeners.advancement_enabled", true);
+    }
+
+    public void toggleListener(String listener, boolean state) {
+        switch (listener) {
+            case "chat":
+                chatEnabled = state;
+                getConfig().set("listeners.chat_enabled", state);
+                break;
+            case "join":
+                joinEnabled = state;
+                getConfig().set("listeners.join_enabled", state);
+                break;
+            case "leave":
+                leaveEnabled = state;
+                getConfig().set("listeners.leave_enabled", state);
+                break;
+            case "death":
+                deathEnabled = state;
+                getConfig().set("listeners.death_enabled", state);
+                break;
+            case "advancement":
+                advancementEnabled = state;
+                getConfig().set("listeners.advancement_enabled", state);
+                break;
+        }
+        saveConfig();
+    }
+
+    public boolean isListenerEnabled(String listener) {
+        switch (listener) {
+            case "chat":
+                return chatEnabled;
+            case "join":
+                return joinEnabled;
+            case "leave":
+                return leaveEnabled;
+            case "death":
+                return deathEnabled;
+            case "advancement":
+                return advancementEnabled;
+            default:
+                return false;
+        }
     }
 }
