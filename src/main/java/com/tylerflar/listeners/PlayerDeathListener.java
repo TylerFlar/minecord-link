@@ -21,6 +21,9 @@ public class PlayerDeathListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
+        if (!plugin.isListenerEnabled("death")) {
+            return;
+        }
         String playerName = event.getEntity().getName();
         String deathMessage = event.getDeathMessage();
         String avatarUrl = "https://mc-heads.net/avatar/" + playerName;

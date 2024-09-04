@@ -10,3 +10,10 @@ discord:
   channel_id: ""
   webhook_url: ""
   crosschat_enabled: true
+
+listeners:
+  chat_enabled: true
+  join_enabled: true
+  leave_enabled: true
+  death_enabled: true
+  advancement_enabled: true
