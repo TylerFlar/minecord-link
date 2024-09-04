@@ -53,10 +53,10 @@ public class MineCordLink extends JavaPlugin {
         updateConfig();
         this.discordBot = new DiscordBot(this);
         discordBot.start();
-        getCommand("minecordlink").setExecutor(new ReloadCommand(this, discordBot));
-        getCommand("coords").setExecutor(new CoordsCommand(this));
-        getCommand("linkdiscord").setExecutor(new LinkDiscordCommand(this));
-        getCommand("togglelistener").setExecutor(new ToggleListenerCommand(this));
+        getCommand("mcl").setExecutor(new ReloadCommand(this, discordBot));
+        getCommand("mclcoords").setExecutor(new CoordsCommand(this));
+        getCommand("mcllinkdiscord").setExecutor(new LinkDiscordCommand(this));
+        getCommand("mcltogglelistener").setExecutor(new ToggleListenerCommand(this));
         // Wait for the bot to be ready before creating the WebhookManager
         getServer().getScheduler().runTaskLater(this, () -> {
             this.webhookManager = new WebhookManager(this, discordBot.getBotAvatarUrl(), discordBot.getBotUsername());

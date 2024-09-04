@@ -46,7 +46,7 @@ public class LinkMinecraftCommand implements Command {
 
             EmbedBuilder embed = new EmbedBuilder()
                 .setTitle("Minecraft Account Linking")
-                .setDescription("Your link code is: `" + code + "`\nUse this code with the `/linkdiscord` command in Minecraft to link your accounts.")
+                .setDescription("Your link code is: `" + code + "`\nUse this code with the /mcllinkdiscord command in Minecraft to link your accounts.")
                 .setColor(Color.decode("#3498db").getRGB());
             event.replyEmbeds(embed.build()).setEphemeral(true).queue();
 
