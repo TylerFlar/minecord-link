@@ -1,6 +1,8 @@
 package com.tylerflar.commands;
 
 import com.tylerflar.MineCordLink;
+
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,6 +22,11 @@ public class ToggleListenerCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!sender.hasPermission("minecordlink.togglelistener")) {
+            sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+            return true;
+        }
+
         if (args.length != 2) {
             sender.sendMessage("Usage: /togglelistener <listener> <on|off>");
             return true;
