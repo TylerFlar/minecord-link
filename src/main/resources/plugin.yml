@@ -15,7 +15,14 @@ commands:
   linkdiscord:
     description: Generate or enter a code to link your Minecraft account to Discord
     usage: /<command> [code]
+  togglelistener:
+    description: Toggle individual listeners on or off
+    usage: /<command> <listener> <on|off>
+    permission: minecordlink.togglelistener
 permissions:
   minecordlink.reload:
     description: Allows reloading the MineCord-Link configuration
+    default: op
+  minecordlink.togglelistener:
+    description: Allows toggling individual listeners
     default: op

@@ -21,6 +21,9 @@ public class LeaveListener implements Listener {
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
+        if (!plugin.isListenerEnabled("leave")) {
+            return;
+        }
         String playerName = event.getPlayer().getName();
         String avatarUrl = "https://mc-heads.net/avatar/" + playerName;
 

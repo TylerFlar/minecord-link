@@ -21,6 +21,9 @@ public class JoinListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        if (!plugin.isListenerEnabled("join")) {
+            return;
+        }
         String playerName = event.getPlayer().getName();
         String avatarUrl = "https://mc-heads.net/avatar/" + playerName;
 

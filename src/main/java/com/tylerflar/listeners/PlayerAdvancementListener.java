@@ -26,6 +26,10 @@ public class PlayerAdvancementListener implements Listener {
 
     @EventHandler
     public void onPlayerAdvancement(PlayerAdvancementDoneEvent event) {
+        if (!plugin.isListenerEnabled("advancement")) {
+            return;
+        }
+
         String playerName = event.getPlayer().getName();
         Advancement advancement = event.getAdvancement();
         String advancementKey = advancement.getKey().getKey();
